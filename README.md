@@ -1,4 +1,12 @@
 # Editable React Table
+<<<<<<< Updated upstream
+=======
+
+<!-- prettier-ignore -->
+> [!NOTE]
+> [Rowstack](https://rowstack.io) is a professional React database component I built that's brilliantly designed, feature rich and performant. Check it out!
+
+>>>>>>> Stashed changes
 ## Features
 
 - Resizing columns

@@ -56,34 +56,40 @@ export default function SelectCell({
   }
 
   function handleOptionKeyDown(e) {
-    if (e.key === 'Enter') {
-      if (e.target.value !== '') {
+    if (e.key === 'Enter' && e.target.value !== '') {
+      // Add new option if value is not empty
+      const newOption = e.target.value.trim();
+      if (newOption) {
         dataDispatch({
           type: ActionTypes.ADD_OPTION_TO_COLUMN,
-          option: e.target.value,
+          option: newOption,
           backgroundColor: randomColor(),
           columnId,
         });
       }
-      setShowAdd(false);
+      setShowAdd(true); // Hide input after adding option
     }
   }
 
   function handleOptionBlur(e) {
     if (e.target.value !== '') {
-      dataDispatch({
-        type: ActionTypes.ADD_OPTION_TO_COLUMN,
-        option: e.target.value,
-        backgroundColor: randomColor(),
-        columnId,
-      });
+      const newOption = e.target.value.trim();
+      if (newOption) {
+        dataDispatch({
+          type: ActionTypes.ADD_OPTION_TO_COLUMN,
+          option: newOption,
+          backgroundColor: randomColor(),
+          columnId,
+        });
+      }
     }
-    setShowAdd(false);
+    setShowAdd(true); // Hide input after adding option
   }
+
 
   function handleOptionClick(option) {
     setValue({ value: option.label, update: true });
-    setShowSelect(false);
+    setShowSelect(true);
   }
 
   useEffect(() => {
@@ -96,7 +102,7 @@ export default function SelectCell({
     <>
       <div
         ref={setSelectRef}
-        className="cell-padding d-flex cursor-default align-items-center flex-1"
+        className="cell-padding d-flex cursor-default align-items-center flex-1" style={{ height: "100%" }}
         onClick={() => setShowSelect(true)}
       >
         {value.value && (

@@ -186,17 +186,21 @@ export default function HeaderMenu({
             <span className="svg-icon svg-text icon-margin">
               <DataTypeIcon dataType={dataType} />
             </span>
-            <span className="text-transform-capitalize">{dataType}</span>
+            <span className="text-transform-capitalize"> {dataType}</span>
           </button>
           {showTypeMenu && (
-            <TypesMenu
-              popper={typePopper}
-              popperRef={setTypePopperElement}
-              onClose={onTypeMenuClose}
-              setShowTypeMenu={setShowTypeMenu}
-              columnId={columnId}
-              dataDispatch={dataDispatch}
-            />
+            <>
+
+
+              <TypesMenu
+                popper={typePopper}
+                popperRef={setTypePopperElement}
+                onClose={onTypeMenuClose}
+                setShowTypeMenu={setShowTypeMenu}
+                columnId={columnId}
+                dataDispatch={dataDispatch}
+              />
+            </>
           )}
         </div>
         <div style={{ borderTop: `2px solid ${grey(200)}` }} />

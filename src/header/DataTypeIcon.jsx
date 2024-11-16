@@ -3,6 +3,7 @@ import { DataTypes } from '../utils';
 import TextIcon from '../img/Text';
 import MultiIcon from '../img/Multi';
 import HashIcon from '../img/Hash';
+import CalendarIcon from '../img/Calendar';
 
 export default function DataTypeIcon({ dataType }) {
   function getPropertyIcon(dataType) {
@@ -13,6 +14,8 @@ export default function DataTypeIcon({ dataType }) {
         return <TextIcon />;
       case DataTypes.SELECT:
         return <MultiIcon />;
+      case DataTypes.DATE:
+        return <CalendarIcon />;
       default:
         return null;
     }

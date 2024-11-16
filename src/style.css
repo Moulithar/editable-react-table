@@ -87,6 +87,21 @@ html {
   box-sizing: border-box;
   flex: 1 1 auto;
 }
+.data-input {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  border: none;
+  padding: 0.5rem;
+  color: #424242;
+  font-size: 1rem;
+  border-radius: 4px;
+  resize: none;
+  background-color: white;
+  box-sizing: border-box;
+  flex: 1 1 auto;
+}
 
 .data-input:focus {
   outline: none;
@@ -234,6 +249,7 @@ html {
   border-left: 1px solid #e0e0e0;
   border-top: 1px solid #e0e0e0;
   position: relative;
+  overflow: visible;
 }
 
 .th {
@@ -255,6 +271,10 @@ html {
 .tr:first-child .td {
   border-top: 0;
 }
+
+/* .tr {
+  min-height: 100px !important;
+} */
 
 .text-align-right {
   text-align: right;
@@ -340,14 +360,6 @@ html {
   overflow: auto;
 }
 
-.overflow-hidden {
-  overflow: hidden;
-}
-
-.overflow-y-hidden {
-  overflow-y: hidden;
-}
-
 .list-padding {
   padding: 4px 0px;
 }
@@ -379,3 +391,11 @@ html {
 .text-transform-capitalize {
   text-transform: capitalize;
 }
+
+/* .overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-y-hidden {
+  overflow-y: hidden;
+} */

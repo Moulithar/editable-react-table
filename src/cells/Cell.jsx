@@ -3,6 +3,7 @@ import { DataTypes } from '../utils';
 import TextCell from './TextCell';
 import NumberCell from './NumberCell';
 import SelectCell from './SelectCell';
+import DateCell from './DateCell';
 
 export default function Cell({
   value: initialValue,
@@ -24,6 +25,24 @@ export default function Cell({
       case DataTypes.NUMBER:
         return (
           <NumberCell
+            initialValue={initialValue}
+            rowIndex={index}
+            columnId={id}
+            dataDispatch={dataDispatch}
+          />
+        );
+      case DataTypes.NUMBER:
+        return (
+          <NumberCell
+            initialValue={initialValue}
+            rowIndex={index}
+            columnId={id}
+            dataDispatch={dataDispatch}
+          />
+        );
+      case DataTypes.DATE:
+        return (
+          <DateCell
             initialValue={initialValue}
             rowIndex={index}
             columnId={id}

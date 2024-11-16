@@ -9,6 +9,9 @@ import {
   DataTypes,
 } from './utils';
 import update from 'immutability-helper';
+import axios from 'axios';
+// import DataTable from './GridTable';
+// import PlayGround from './PlayGround';
 
 function reducer(state, action) {
   switch (action.type) {
@@ -103,6 +106,25 @@ function reducer(state, action) {
               },
             });
           }
+        case DataTypes.DATE:
+          if (state.columns[typeIndex].dataType === DataTypes.DATE) {
+            return state; // No change needed if already of type DATE
+          } else {
+            return update(state, {
+              skipReset: { $set: true },
+              columns: { [typeIndex]: { dataType: { $set: action.dataType } } },
+              data: {
+                $apply: data =>
+                  data.map(row => ({
+                    ...row,
+                    [action.columnId]: isNaN(Date.parse(row[action.columnId]))
+                      ? ''
+                      : new Date(row[action.columnId]).toISOString(), // Ensure consistent date formatting
+                  })),
+              },
+            });
+          }
+
         default:
           return state;
       }
@@ -185,7 +207,29 @@ function reducer(state, action) {
 }
 
 function App() {
-  const [state, dispatch] = useReducer(reducer, makeData(1000));
+  const [state, dispatch] = useReducer(reducer, makeData(10));
+
+  const syncDataWithApi = async (tableState) => {
+    const payload = {
+      data: tableState.data, // Only cell data
+      columns: tableState.columns, // Include columns if structure changes need saving
+    };
+
+    try {
+      await axios.post('/api/save-data', payload);
+      console.log("Data synced with the server successfully.");
+    } catch (error) {
+      console.error("Failed to sync data:", error);
+    }
+  };
+
+  useEffect(() => {
+    console.log("Updated data after dispatch:", state);
+
+    // Call sync function here if needed
+    syncDataWithApi(state);
+
+  }, [state]);
 
   useEffect(() => {
     dispatch({ type: ActionTypes.ENABLE_RESET });
@@ -198,20 +242,40 @@ function App() {
         width: '100vw',
         height: '100vh',
         padding: 10,
+        // backgroundColor: "green"
       }}
     >
-      <div style={{ marginBottom: 40, marginTop: 40 }}>
+
+      {/* <div style={{ marginBottom: 40, marginTop: 40 }}>
         <h1>Editable React Table - Demo</h1>
-      </div>
+      </div> */}
       <Table
         columns={state.columns}
         data={state.data}
         dispatch={dispatch}
         skipReset={state.skipReset}
+        selectableRows="single"
+      // onSelectedRowsChange={handleChangeRow}
+
+
+      // clearSelectedRows={toggledClearRows}
       />
+
       <div id="popper-portal"></div>
+
+
     </div>
   );
 }
 
 export default App;
+
+
+
+{/* <div style={{
+  minHeight: "300px"
+}}>
+
+  <PlayGround />
+</div>
+<DataTable /> */}
