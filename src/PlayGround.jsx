@@ -1,29 +1,24 @@
 import React, { useState, useEffect } from 'react';
 
 const PlayGround = () => {
-    const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useState([]);
 
-    useEffect(() => {
+  useEffect(() => {
+    let response = fetch('https://jsonplaceholder.typicode.com/posts').then(
+      res => res.json()
+    ); // Asynchronous, doesn't block execution
 
-        let response = fetch("https://jsonplaceholder.typicode.com/posts").then((res) => res.json()); // Asynchronous, doesn't block execution
+    setPosts(response.data);
+  }, []);
 
-
-
-        setPosts(response.data)
-
-
-
-    }, []);
-
-    return (
-        <>
-            <pre>{JSON.stringify(posts, null, 2)}</pre>
-        </>
-    );
-}
+  return (
+    <>
+      <pre>{JSON.stringify(posts, null, 2)}</pre>
+    </>
+  );
+};
 
 export default PlayGround;
-
 
 // import React, { CSSProperties } from 'react'
 // import ReactDOM from 'react-dom/client'

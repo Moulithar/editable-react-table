@@ -209,7 +209,7 @@ function reducer(state, action) {
 function App() {
   const [state, dispatch] = useReducer(reducer, makeData(10));
 
-  const syncDataWithApi = async (tableState) => {
+  const syncDataWithApi = async tableState => {
     const payload = {
       data: tableState.data, // Only cell data
       columns: tableState.columns, // Include columns if structure changes need saving
@@ -217,18 +217,17 @@ function App() {
 
     try {
       await axios.post('/api/save-data', payload);
-      console.log("Data synced with the server successfully.");
+      console.log('Data synced with the server successfully.');
     } catch (error) {
-      console.error("Failed to sync data:", error);
+      console.error('Failed to sync data:', error);
     }
   };
 
   useEffect(() => {
-    console.log("Updated data after dispatch:", state);
+    console.log('Updated data after dispatch:', state);
 
     // Call sync function here if needed
     syncDataWithApi(state);
-
   }, [state]);
 
   useEffect(() => {
@@ -245,7 +244,6 @@ function App() {
         // backgroundColor: "green"
       }}
     >
-
       {/* <div style={{ marginBottom: 40, marginTop: 40 }}>
         <h1>Editable React Table - Demo</h1>
       </div> */}
@@ -255,27 +253,24 @@ function App() {
         dispatch={dispatch}
         skipReset={state.skipReset}
         selectableRows="single"
-      // onSelectedRowsChange={handleChangeRow}
+        // onSelectedRowsChange={handleChangeRow}
 
-
-      // clearSelectedRows={toggledClearRows}
+        // clearSelectedRows={toggledClearRows}
       />
 
       <div id="popper-portal"></div>
-
-
     </div>
   );
 }
 
 export default App;
 
-
-
-{/* <div style={{
+{
+  /* <div style={{
   minHeight: "300px"
 }}>
 
   <PlayGround />
 </div>
-<DataTable /> */}
+<DataTable /> */
+}

@@ -190,8 +190,6 @@ export default function HeaderMenu({
           </button>
           {showTypeMenu && (
             <>
-
-
               <TypesMenu
                 popper={typePopper}
                 popperRef={setTypePopperElement}

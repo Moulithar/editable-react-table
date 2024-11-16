@@ -37,7 +37,7 @@ export default function Header({
 
     return (
       <>
-        <div {...getHeaderProps()} className="th noselect d-inline-block" >
+        <div {...getHeaderProps()} className="th noselect d-inline-block">
           <div
             className="th-content"
             onClick={() => setShowHeaderMenu(true)}

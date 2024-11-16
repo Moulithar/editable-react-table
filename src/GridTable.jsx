@@ -166,149 +166,197 @@
 
 // export default DataTable;
 
-
-
 import React, { useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
 const DataTable = () => {
-    const [columnDefs, setColumnDefs] = useState([
-        { headerName: "ID", field: "id", editable: false, type: "number" },
-        { headerName: "Name", field: "name", editable: true, type: "text" },
-        { headerName: "Email", field: "email", editable: true, cellRenderer: EmailRenderer, type: "email" },
-        { headerName: "Tags", field: "tags", editable: true, type: "multiselect", cellEditor: TagsEditor },
-        {
-            headerName: "Active",
-            field: "active",
-            editable: true,
-            type: "checkbox",
+  const [columnDefs, setColumnDefs] = useState([
+    { headerName: 'ID', field: 'id', editable: false, type: 'number' },
+    { headerName: 'Name', field: 'name', editable: true, type: 'text' },
+    {
+      headerName: 'Email',
+      field: 'email',
+      editable: true,
+      cellRenderer: EmailRenderer,
+      type: 'email',
+    },
+    {
+      headerName: 'Tags',
+      field: 'tags',
+      editable: true,
+      type: 'multiselect',
+      cellEditor: TagsEditor,
+    },
+    {
+      headerName: 'Active',
+      field: 'active',
+      editable: true,
+      type: 'checkbox',
+      cellRenderer: CheckboxRenderer,
+      cellEditor: CheckboxEditor,
+    },
+  ]);
+
+  const [rowData, setRowData] = useState([
+    {
+      id: 1,
+      name: 'John Doe',
+      email: 'john@example.com',
+      tags: ['Frontend'],
+      active: true,
+    },
+    {
+      id: 2,
+      name: 'Jane Smith',
+      email: 'jane@example.com',
+      tags: ['Backend'],
+      active: false,
+    },
+  ]);
+
+  // Renderer and Editor for Email
+  function EmailRenderer({ value }) {
+    return <a href={`mailto:${value}`}>{value}</a>;
+  }
+
+  // Renderer and Editor for Checkbox
+  function CheckboxRenderer({ value }) {
+    return <input type="checkbox" checked={!!value} readOnly />;
+  }
+  function CheckboxEditor({ value, api, column, rowIndex }) {
+    const handleChange = e => {
+      api
+        .getDisplayedRowAtIndex(rowIndex)
+        .setDataValue(column.colId, e.target.checked);
+    };
+    return (
+      <input type="checkbox" defaultChecked={!!value} onChange={handleChange} />
+    );
+  }
+
+  // Tags (Multi-select) Editor for setting tags array
+  function TagsEditor({ value, api, column, rowIndex }) {
+    const [selectedTags, setSelectedTags] = useState(value || []);
+    const handleTagChange = e => {
+      const tags = e.target.value.split(',').map(tag => tag.trim());
+      setSelectedTags(tags);
+      api.getDisplayedRowAtIndex(rowIndex).setDataValue(column.colId, tags);
+    };
+    return (
+      <input
+        type="text"
+        defaultValue={selectedTags.join(', ')}
+        onChange={handleTagChange}
+        placeholder="Add tags separated by commas"
+      />
+    );
+  }
+
+  // Adding a new column with custom type
+  const addNewColumn = type => {
+    const newField = `newColumn${columnDefs.length}`;
+    const newColumn = {
+      headerName: `Column ${columnDefs.length}`,
+      field: newField,
+      editable: true,
+      type,
+      ...(type === 'multiselect' && { cellEditor: TagsEditor }),
+      ...(type === 'checkbox' && {
+        cellRenderer: CheckboxRenderer,
+        cellEditor: CheckboxEditor,
+      }),
+      ...(type === 'email' && { cellRenderer: EmailRenderer }),
+    };
+    setColumnDefs([...columnDefs, newColumn]);
+  };
+
+  // Changing Column Header (Renaming)
+  const renameColumn = (field, newHeader) => {
+    const updatedColumns = columnDefs.map(col =>
+      col.field === field ? { ...col, headerName: newHeader } : col
+    );
+    setColumnDefs(updatedColumns);
+  };
+
+  // Changing Column Type
+  const changeColumnType = (field, newType) => {
+    const updatedColumns = columnDefs.map(col => {
+      if (col.field === field) {
+        return {
+          ...col,
+          type: newType,
+          editable: true,
+          ...(newType === 'multiselect' && { cellEditor: TagsEditor }),
+          ...(newType === 'checkbox' && {
             cellRenderer: CheckboxRenderer,
             cellEditor: CheckboxEditor,
-        }
-    ]);
-
-    const [rowData, setRowData] = useState([
-        { id: 1, name: "John Doe", email: "john@example.com", tags: ["Frontend"], active: true },
-        { id: 2, name: "Jane Smith", email: "jane@example.com", tags: ["Backend"], active: false },
-    ]);
-
-    // Renderer and Editor for Email
-    function EmailRenderer({ value }) {
-        return <a href={`mailto:${value}`}>{value}</a>;
-    }
-
-    // Renderer and Editor for Checkbox
-    function CheckboxRenderer({ value }) {
-        return <input type="checkbox" checked={!!value} readOnly />;
-    }
-    function CheckboxEditor({ value, api, column, rowIndex }) {
-        const handleChange = (e) => {
-            api.getDisplayedRowAtIndex(rowIndex).setDataValue(column.colId, e.target.checked);
+          }),
+          ...(newType === 'email' && { cellRenderer: EmailRenderer }),
         };
-        return <input type="checkbox" defaultChecked={!!value} onChange={handleChange} />;
+      }
+      return col;
+    });
+    setColumnDefs(updatedColumns);
+  };
+
+  // Validate cell content based on type
+  const onCellValueChanged = params => {
+    const { colDef, newValue } = params;
+    const { type } = colDef;
+
+    if (type === 'number' && isNaN(newValue)) {
+      params.node.setDataValue(params.column.colId, null);
+      console.log('Invalid input: Please enter a valid number.');
     }
-
-    // Tags (Multi-select) Editor for setting tags array
-    function TagsEditor({ value, api, column, rowIndex }) {
-        const [selectedTags, setSelectedTags] = useState(value || []);
-        const handleTagChange = (e) => {
-            const tags = e.target.value.split(",").map(tag => tag.trim());
-            setSelectedTags(tags);
-            api.getDisplayedRowAtIndex(rowIndex).setDataValue(column.colId, tags);
-        };
-        return <input type="text" defaultValue={selectedTags.join(", ")} onChange={handleTagChange} placeholder="Add tags separated by commas" />;
+    if (
+      type === 'email' &&
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(newValue)
+    ) {
+      params.node.setDataValue(params.column.colId, '');
+      console.log('Invalid input: Please enter a valid email.');
     }
+  };
 
-    // Adding a new column with custom type
-    const addNewColumn = (type) => {
-        const newField = `newColumn${columnDefs.length}`;
-        const newColumn = {
-            headerName: `Column ${columnDefs.length}`,
-            field: newField,
-            editable: true,
-            type,
-            ...(type === "multiselect" && { cellEditor: TagsEditor }),
-            ...(type === "checkbox" && { cellRenderer: CheckboxRenderer, cellEditor: CheckboxEditor }),
-            ...(type === "email" && { cellRenderer: EmailRenderer }),
-        };
-        setColumnDefs([...columnDefs, newColumn]);
-    };
-
-    // Changing Column Header (Renaming)
-    const renameColumn = (field, newHeader) => {
-        const updatedColumns = columnDefs.map(col =>
-            col.field === field ? { ...col, headerName: newHeader } : col
-        );
-        setColumnDefs(updatedColumns);
-    };
-
-    // Changing Column Type
-    const changeColumnType = (field, newType) => {
-        const updatedColumns = columnDefs.map(col => {
-            if (col.field === field) {
-                return {
-                    ...col,
-                    type: newType,
-                    editable: true,
-                    ...(newType === "multiselect" && { cellEditor: TagsEditor }),
-                    ...(newType === "checkbox" && { cellRenderer: CheckboxRenderer, cellEditor: CheckboxEditor }),
-                    ...(newType === "email" && { cellRenderer: EmailRenderer }),
-                };
-            }
-            return col;
-        });
-        setColumnDefs(updatedColumns);
-    };
-
-    // Validate cell content based on type
-    const onCellValueChanged = (params) => {
-        const { colDef, newValue } = params;
-        const { type } = colDef;
-
-        if (type === "number" && isNaN(newValue)) {
-            params.node.setDataValue(params.column.colId, null);
-            console.log("Invalid input: Please enter a valid number.");
-        }
-        if (type === "email" && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(newValue)) {
-            params.node.setDataValue(params.column.colId, "");
-            console.log("Invalid input: Please enter a valid email.");
-        }
-    };
-
-    return (
-        <div className="ag-theme-alpine" style={{ height: 600, width: '100%' }}>
-            <div style={{ marginTop: 10 }}>
-                <button onClick={() => renameColumn("name", "Full Name")}>Rename "Name" to "Full Name"</button>
-                <button onClick={() => changeColumnType("email", "text")}>Change "Email" to Text</button>
-            </div>
-            <div style={{ marginBottom: 10 }}>
-                <button onClick={() => addNewColumn("text")}>Add Text Column</button>
-                <button onClick={() => addNewColumn("number")}>Add Number Column</button>
-                <button onClick={() => addNewColumn("email")}>Add Email Column</button>
-                <button onClick={() => addNewColumn("multiselect")}>Add Tags Column</button>
-                <button onClick={() => addNewColumn("checkbox")}>Add Checkbox Column</button>
-            </div>
-            <AgGridReact
-                columnDefs={columnDefs}
-                rowData={rowData}
-                defaultColDef={{
-                    flex: 1,
-                    minWidth: 100,
-                    sortable: true,
-                    filter: true,
-                    resizable: true,
-                    editable: true,
-                }}
-                onCellValueChanged={onCellValueChanged}
-            />
-
-        </div>
-    );
+  return (
+    <div className="ag-theme-alpine" style={{ height: 600, width: '100%' }}>
+      <div style={{ marginTop: 10 }}>
+        <button onClick={() => renameColumn('name', 'Full Name')}>
+          Rename "Name" to "Full Name"
+        </button>
+        <button onClick={() => changeColumnType('email', 'text')}>
+          Change "Email" to Text
+        </button>
+      </div>
+      <div style={{ marginBottom: 10 }}>
+        <button onClick={() => addNewColumn('text')}>Add Text Column</button>
+        <button onClick={() => addNewColumn('number')}>
+          Add Number Column
+        </button>
+        <button onClick={() => addNewColumn('email')}>Add Email Column</button>
+        <button onClick={() => addNewColumn('multiselect')}>
+          Add Tags Column
+        </button>
+        <button onClick={() => addNewColumn('checkbox')}>
+          Add Checkbox Column
+        </button>
+      </div>
+      <AgGridReact
+        columnDefs={columnDefs}
+        rowData={rowData}
+        defaultColDef={{
+          flex: 1,
+          minWidth: 100,
+          sortable: true,
+          filter: true,
+          resizable: true,
+          editable: true,
+        }}
+        onCellValueChanged={onCellValueChanged}
+      />
+    </div>
+  );
 };
 
 export default DataTable;
-
-
-

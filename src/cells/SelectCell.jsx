@@ -86,7 +86,6 @@ export default function SelectCell({
     setShowAdd(true); // Hide input after adding option
   }
 
-
   function handleOptionClick(option) {
     setValue({ value: option.label, update: true });
     setShowSelect(true);
@@ -102,7 +101,8 @@ export default function SelectCell({
     <>
       <div
         ref={setSelectRef}
-        className="cell-padding d-flex cursor-default align-items-center flex-1" style={{ height: "100%" }}
+        className="cell-padding d-flex cursor-default align-items-center flex-1"
+        style={{ height: '100%' }}
         onClick={() => setShowSelect(true)}
       >
         {value.value && (

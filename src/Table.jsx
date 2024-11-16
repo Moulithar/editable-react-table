@@ -91,15 +91,14 @@ export default function Table({
           })}
           className={`tr ${isChecked ? 'selected' : ''}`}
         >
-
-          <div style={{
-            padding: "10px",
-            border: "0.5px solid #e7e7e7"
-
-          }}>
-
+          <div
+            style={{
+              padding: '10px',
+              border: '0.5px solid #e7e7e7',
+            }}
+          >
             <input
-              type='checkbox'
+              type="checkbox"
               checked={isChecked}
               onChange={() => handleRowSelect(row)}
             />
@@ -115,7 +114,7 @@ export default function Table({
     [prepareRow, rows, checkedRows]
   );
 
-  const handleRowSelect = (row) => {
+  const handleRowSelect = row => {
     const newCheckedRows = new Set(checkedRows);
 
     if (newCheckedRows.has(row.id)) {
@@ -135,7 +134,6 @@ export default function Table({
 
     console.log('Selected row data:', updatedSelectedRows);
   };
-
 
   const handleSelectAll = () => {
     if (checkedRows.size === rows.length) {
@@ -160,23 +158,21 @@ export default function Table({
   return (
     <div style={{ width: '100vw', overflow: 'auto' }}>
       {/* <pre className="">{JSON.stringify(columns, null, 2)} </pre> */}
-      <div
-        {...getTableProps()}
-        className={clsx('table')}
-      >
-        <div >
+      <div {...getTableProps()} className={clsx('table')}>
+        <div>
           {/* <div style={{ marginRight: "25px" }}> */}
           {headerGroups.map(headerGroup => (
             <div {...headerGroup.getHeaderGroupProps()} className="tr">
-              <div style={{
-                display: "grid",
-                placeItems: "center",
-                border: "0.5px solid #e7e7e7", padding: "10px"
-
-              }}>
-
+              <div
+                style={{
+                  display: 'grid',
+                  placeItems: 'center',
+                  border: '0.5px solid #e7e7e7',
+                  padding: '10px',
+                }}
+              >
                 <input
-                  type='checkbox'
+                  type="checkbox"
                   onChange={handleSelectAll}
                   checked={checkedRows.size === rows.length}
                 />
@@ -208,7 +204,6 @@ export default function Table({
     </div>
   );
 }
-
 
 // import React, { useEffect, useMemo, useState } from 'react';
 // import clsx from 'clsx';
@@ -332,7 +327,6 @@ export default function Table({
 //       // You can trigger any action or API call with the selected row data here
 //     }
 //   }, [selectedRowData]);
-
 
 //   function isTableResizing() {
 //     for (let headerGroup of headerGroups) {
